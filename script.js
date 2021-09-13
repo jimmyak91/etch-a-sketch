@@ -1,31 +1,36 @@
-const DEFAULT_COLOUR = "#333333";
-const DEFAULT_SIZE = 16;
+const DEFAULT_COLOUR = "#427DAD";
+const DEFAULT_SIZE = 32;
 const DEFAULT_MODE = 'colour';
 
 let currentColour = DEFAULT_COLOUR;
 let currentMode = DEFAULT_MODE;
 let currentSize = DEFAULT_SIZE;
 
+const setColour = document.querySelector('#colour-picker');
+const colour = document.querySelector('input');
+var choosenColour = '#427DAD';
+
+const container = document.querySelector('.container');
+
+
+//Change Drawing Settings Functions
 function setCurrentColour(newColour) {
     currentColour = newColour;
 }
-
 function setCurrentMode(newMode) {
-    currentMode = newMode;
+  activateButton(newMode);  
+  currentMode = newMode;
 }
-
 function setCurrentSize(newSize) {
     currentSize = newSize;
 }
 
 
-
-
-var gridAxisSize = 16;
-var container = document.querySelector('.container');
-var gridSize = gridAxisSize * gridAxisSize;
+//Create Grid per specified size eg 16x16
 function createGrid (size) {
-    squareSize = 600 / gridAxisSize;
+    var container = document.querySelector('.container');
+    var gridSize = currentSize * currentSize;
+    squareSize = 500 / currentSize;
     console.log(squareSize);
     console.log(gridSize);
     for (let x = 0; x < gridSize; x++) {
@@ -33,66 +38,52 @@ function createGrid (size) {
         newDiv.className = 'grid';
         newDiv.style.flex = '0 0 ' + squareSize + 'px';
         newDiv.style.height = squareSize + 'px';
-        // newDiv.style.flexWrap = 'wrap'
         newDiv.style.width = squareSize + 'px';
+        newDiv.addEventListener('mouseover', changeColor);
         container.appendChild(newDiv);
     }
 
 }
 
-// createGrid(gridSize);
 
-const setColour = document.querySelector('#colour-picker');
-const colour = document.querySelector('input');
-var choosenColour = '#333333';
+const divChange = document.querySelectorAll('.grid');
+const clearButton = document.querySelector('#clear');
+
+//Grid Functions
+function clearGrid() {
+  container.innerHTML = "";
+}
+function reloadGrid() {
+  clearGrid();
+  createGrid(currentSize);
+}
+function changeGridSize(newGridSize) {
+  console.log(newGridSize);
+  setCurrentSize(newGridSize);
+  console.log(currentSize);
+  reloadGrid();
+}
+
+
+clearButton.onclick = () => reloadGrid()
+colour.onchange = (e) => setCurrentColour(e.target.value);
+
+
+var sizeSlider = document.querySelector('#sizeSlider');
+
+sizeSlider.onchange = (e) => changeGridSize(e.target.value);
+sizeSlider.onmousemove = (e) => changeSizeDisplay(e.target.value);
+
+var sizeDisplay = document.querySelector('#sizeDisplay');
+function changeSizeDisplay (displayValue) {
+  sizeDisplay.innerHTML = `${displayValue} x ${displayValue}`;
+}
+
+
 
 colour.addEventListener('input', function( event ) {
     setColour.style.backgroundColor = this.value;
-    choosenColour = setColour.style.backgroundColor;
   }, false);
-
-
-const divChange = document.querySelectorAll('.grid');
-console.log(divChange);
-
-divChange.forEach(el => el.addEventListener('mouseover', event => {
-    // console.log(event.target.getAttribute("data-el"));
-    event.target.style.backgroundColor = choosenColour;
-  }));
-
-const clearButton = document.querySelector('#clear');
-clearButton.addEventListener("click", function( event ) {
-    for (i = 0; i < divChange.length; i++) {
-        divChange[i].style.backgroundColor = "";
-        
-    }
-        clearButton.setAttribute('style', 'border: 3px solid #c7c7c7');
-        // reset the color after a short delay
-        setTimeout(function() {
-            clearButton.style.border = "";
-          }, 100);
-  }, false);
-
-
-//////////////////////////////
-// MOUSE OVER STYLES
-
-// clearButton.addEventListener('mouseenter', function( event ) {
-//     clearButton.setAttribute('style', 'zoom: 120%;');
-// });
-
-// clearButton.addEventListener('mouseleave', function( event ) {
-//     clearButton.setAttribute('style', 'zoom: 100%;');
-// });
-
-// setColour.addEventListener('mouseenter', function( event ) {
-//     setColour.setAttribute('style', 'zoom: 120%;');
-// });
-
-// setColour.addEventListener('mouseleave', function( event ) {
-//     setColour.setAttribute('style', 'zoom: 100%;');
-
-// });
 
 function changeColor(e) {
     if (currentMode === 'rainbow') {
@@ -101,33 +92,47 @@ function changeColor(e) {
       const randomB = Math.floor(Math.random() * 256)
       e.target.style.backgroundColor = `rgb(${randomR}, ${randomG}, ${randomB})`
     } else if (currentMode === 'colour') {
-      e.target.style.backgroundColor = currentColor
+      e.target.style.backgroundColor = currentColour;
     } else if (currentMode === 'eraser') {
       e.target.style.backgroundColor = '#fefefe'
     }
   }
 
 
+  var colourBtn = document.querySelector('#colourButton');
+  var rainbowBtn = document.querySelector('#rainbowButton');
+  var eraserBtn = document.querySelector('#eraserButton');
+
+colourBtn.onclick = () => setCurrentMode('colour');
+rainbowBtn.onclick = () => setCurrentMode('rainbow');
+eraserBtn.onclick = () => setCurrentMode('eraser');
+
 function activateButton(newMode) {
     if (currentMode === 'rainbow') {
       rainbowBtn.classList.remove('active')
-    } else if (currentMode === 'color') {
-      colorBtn.classList.remove('active')
+    } else if (currentMode === 'colour') {
+      colourBtn.classList.remove('active')
     } else if (currentMode === 'eraser') {
       eraserBtn.classList.remove('active')
     }
   
     if (newMode === 'rainbow') {
       rainbowBtn.classList.add('active')
-    } else if (newMode === 'color') {
-      colorBtn.classList.add('active')
+    } else if (newMode === 'colour') {
+      colourBtn.classList.add('active')
     } else if (newMode === 'eraser') {
       eraserBtn.classList.add('active')
     }
   }
-  
-  window.onload = () => {
-    createGrid(DEFAULT_SIZE)
-    console.log("On WIndow load")
-    // activateButton(DEFAULT_MODE)
-  }
+
+document.getElementById("sizeSlider").oninput = function() {
+  var value = (this.value-this.min)/(this.max-this.min)*100
+  this.style.background = 'linear-gradient(to right, #427DAD 0%, #427DAD ' + value + '%, #fff ' + value + '%, white 100%)'
+};
+
+window.onload = () => {
+  createGrid(DEFAULT_SIZE);
+  console.log("On WIndow load")
+  activateButton(DEFAULT_MODE)
+}
+

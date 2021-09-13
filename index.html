@@ -10,7 +10,7 @@
     <div class="header">
         <h1>Etch-A-Sketch</h1>
     </div>
-    <div class="main">
+    
         
         <div class="container">
         </div>
@@ -23,16 +23,23 @@
             <span id="colour-picker">
             <input type="color" id="colour">
         </div>
+        <div class="size">
+            <div id="sizeDisplay">32 x 32</div>
+            <input id="sizeSlider" type="range" value="32" min="1" max="64" />
+        </div>  
+
+        <div class="modeColour">
+            <button id="colourButton">Colour</button>
+        </div>  
+        <div class="modeRainbow">
+            <button id="rainbowButton">Rainbow</button>
+        </div>  
+        <div class="modeEraser">
+            <button id="eraserButton">Eraser</button>
+        </div>  
         <div class="clear">
             <button id="clear">Clear</button>
         </div>
-
-        <div class="size">
-            <input id="sizeSlider" type="range" value="16" min="1" max="64" />
-        </div>  
-        
-        
-
-    </div>
+    
 </body>
 </html>
